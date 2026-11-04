@@ -45,12 +45,19 @@ async function loadMahasiswa(keyword = '') {
         
         //Percobaan 6-1 Langkah 4 kirim request
         const response = await fetch(url);
-        if (!response.ok) throw new Error 
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
         
         //Percobaan 6-1 Langkah 4 kirim ekstrak json 
+        const result = await response.json();
+        if (result.status === 'success') {
+            renderTable(result.data, keyword);
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        }
 
       
-    } catch (error) {
+    catch (error) {
         tabelBody.innerHTML = `
             <tr>
                 <td colspan="8" style="text-align: center; padding: 20px; color: #ef4444;">
