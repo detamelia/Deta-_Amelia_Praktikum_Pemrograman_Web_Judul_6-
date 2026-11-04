@@ -45,19 +45,12 @@ async function loadMahasiswa(keyword = '') {
         
         //Percobaan 6-1 Langkah 4 kirim request
         const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+        if (!response.ok) throw new Error 
         
         //Percobaan 6-1 Langkah 4 kirim ekstrak json 
-        const result = await response.json();
-        if (result.status === 'success') {
-            renderTable(result.data, keyword);
-            } else {
-                showAlert(result.message, 'danger');
-            }
-        }
 
       
-    catch (error) {
+    } catch (error) {
         tabelBody.innerHTML = `
             <tr>
                 <td colspan="8" style="text-align: center; padding: 20px; color: #ef4444;">
@@ -177,27 +170,42 @@ if (formEdit) {
 // 4. Fetch API POST: Menambahkan Data Baru Tanpa Reload
 if (formTambah) {
     formTambah.addEventListener('submit', async function (event) {
-        // Percobaan 6-2 Langkah 3 
+    // Percobaan 6-2 Langkah 3
+    event.preventDefault();
 
-        const dataMahasiswa = {
-            // Percobaan 6-2 Langkah 4
+    // Percobaan 6-2 Langkah 4
+    const dataMahasiswa = {
+        npm: document.getElementById('npm').value.trim(),
+        nama: document.getElementById('nama').value.trim(),
+        program_studi: document.getElementById('program_studi').value,
+        angkatan: parseInt(document.getElementById('angkatan').value, 10),
+        email: document.getElementById('email').value.trim()
+    };
 
-        };
+    try {
+        // Percobaan 6-2 Langkah 5
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataMahasiswa)
+        });
 
-        try {
-            // Percobaan 6-2 Langkah 5
-            
-            if (response.ok && result.status === 'success') {
-                showAlert(result.message, 'success');
-                formTambah.reset();
-                loadMahasiswa(); // Refresh data otomatis
-            } else {
-                showAlert(result.message || 'Gagal menyimpan data', 'danger');
-            }
-        } catch (error) {
-            showAlert(`Terjadi kesalahan koneksi: ${error.message}`, 'danger');
+        const result = await response.json();
+
+        if (response.ok && result.status === 'success') {
+            showAlert(result.message, 'success');
+            formTambah.reset();
+            loadMahasiswa(); // Refresh data otomatis
+        } else {
+            showAlert(result.message || 'Gagal menyimpan data', 'danger');
         }
-    });
+
+    } catch (error) {
+        showAlert(`Terjadi kesalahan koneksi: ${error.message}`, 'danger');
+    }
+});
 }
 
 // 5. Fetch API DELETE: Menghapus Data Secara Asinkron
@@ -225,3 +233,4 @@ if (inputSearch) {
 }
 
 // Inisialisasi: Panggil Data Pertama Kali
+
